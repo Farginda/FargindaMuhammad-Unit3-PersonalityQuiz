@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class QuestionViewController: UIViewController {
     @IBOutlet weak var questionLabel: UILabel!
     
@@ -87,11 +88,11 @@ class QuestionViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        calculatePersonalityResult()
         updateUI()
         navigationItem.hidesBackButton = true
     }
     
+    // possible questions
     var questions: [Question] = [
     Question(text: "Which food do you like the most?",
              type:.single,
@@ -123,26 +124,9 @@ class QuestionViewController: UIViewController {
     var questionIndex = 0
     var answersChosen : [Answer] = []
     var responses: [Answer]!
+
     
-    func calculatePersonalityResult() {
-        var frequencyOfAnswers: [AnimalType: Int] = [:]
-        let responseTypes = responses.map {$0.type}
-        for response in responseTypes {
-            frequencyOfAnswers[response] = (frequencyOfAnswers[response] ?? 0) + 1
-        }
-    
-        let frequentAnswersSorted = frequencyOfAnswers.sorted(by:
-        { (pair1, pair2) -> Bool in
-            return pair1.value > pair2.value
-        })
-        
-        let mostCommonAnswer = frequencyOfAnswers.sorted { $0.1 > $1.1 }.first!.key
-        
-        resultAnswerLabel.text = "You are a \(mostCommonAnswer.rawValue)!"
-        resultDefinitionLabel.text = mostCommonAnswer.definition
-        
-    }
-    
+    // update user interface
     func updateUI() {
         singleStackView.isHidden = true
         multipleStackView.isHidden = true
@@ -166,6 +150,7 @@ class QuestionViewController: UIViewController {
         }
     }
     
+    // update single stack answers
     func updateSingleStack(using answers: [Answer]) {
         singleStackView.isHidden = false
         singleButton1.setTitle(answers[0].text, for: .normal)
@@ -174,6 +159,7 @@ class QuestionViewController: UIViewController {
         singleButton4.setTitle(answers[3].text, for: .normal)
     }
     
+    // update multiple stack answers
     func updateMultipleStack(using answers: [Answer]) {
         multipleStackView.isHidden = false
         multiSwitch1.isOn = false
@@ -185,6 +171,8 @@ class QuestionViewController: UIViewController {
         multiLabel3.text = answers[2].text
         multiLabel4.text = answers[3].text
     }
+    
+    // update ranged stack answers
     func updateRangedStack(using answers: [Answer]) {
         rangedStackView.isHidden = false
         rangedSlider.setValue(0.5, animated: false)
@@ -192,6 +180,7 @@ class QuestionViewController: UIViewController {
         rangedLabel2.text = answers.last?.text
     }
 
+    // function to navigate to next question
     func nextQuestion() {
         questionIndex += 1
         
@@ -205,20 +194,9 @@ class QuestionViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ResultsSegue" {
             let resultsViewController = segue.destination as! ResultsViewController
-        resultsViewController.responses = answersChosen
+            resultsViewController.responses = answersChosen
         }
     }
-    
 
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
